@@ -13,6 +13,8 @@
 		335ADA2927DA9F2D00194E9C /* Main.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = 335ADA2727DA9F2D00194E9C /* Main.storyboard */; };
 		335ADA2B27DA9F2F00194E9C /* Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = 335ADA2A27DA9F2F00194E9C /* Assets.xcassets */; };
 		335ADA2E27DA9F2F00194E9C /* LaunchScreen.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = 335ADA2C27DA9F2F00194E9C /* LaunchScreen.storyboard */; };
+		335ADA3627DAA7D000194E9C /* HomeCollectionViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 335ADA3527DAA7D000194E9C /* HomeCollectionViewController.swift */; };
+		335ADA3827DAAB2200194E9C /* MovieCollectionViewCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = 335ADA3727DAAB2100194E9C /* MovieCollectionViewCell.swift */; };
 		FDFBBF9D520BF3836400427D /* Pods_2coderMovies.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = B77E9B5A7E8C411830CB287D /* Pods_2coderMovies.framework */; };
 /* End PBXBuildFile section */
 
@@ -25,6 +27,8 @@
 		335ADA2A27DA9F2F00194E9C /* Assets.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; path = Assets.xcassets; sourceTree = "<group>"; };
 		335ADA2D27DA9F2F00194E9C /* Base */ = {isa = PBXFileReference; lastKnownFileType = file.storyboard; name = Base; path = Base.lproj/LaunchScreen.storyboard; sourceTree = "<group>"; };
 		335ADA2F27DA9F2F00194E9C /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
+		335ADA3527DAA7D000194E9C /* HomeCollectionViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = HomeCollectionViewController.swift; sourceTree = "<group>"; };
+		335ADA3727DAAB2100194E9C /* MovieCollectionViewCell.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MovieCollectionViewCell.swift; sourceTree = "<group>"; };
 		B77E9B5A7E8C411830CB287D /* Pods_2coderMovies.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; includeInIndex = 0; path = Pods_2coderMovies.framework; sourceTree = BUILT_PRODUCTS_DIR; };
 		E212ED190878FE82512B7222 /* Pods-2coderMovies.debug.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-2coderMovies.debug.xcconfig"; path = "Target Support Files/Pods-2coderMovies/Pods-2coderMovies.debug.xcconfig"; sourceTree = "<group>"; };
 		FC24E7A6283F2245698E40CB /* Pods-2coderMovies.release.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-2coderMovies.release.xcconfig"; path = "Target Support Files/Pods-2coderMovies/Pods-2coderMovies.release.xcconfig"; sourceTree = "<group>"; };
@@ -70,6 +74,8 @@
 				335ADA2A27DA9F2F00194E9C /* Assets.xcassets */,
 				335ADA2C27DA9F2F00194E9C /* LaunchScreen.storyboard */,
 				335ADA2F27DA9F2F00194E9C /* Info.plist */,
+				335ADA3527DAA7D000194E9C /* HomeCollectionViewController.swift */,
+				335ADA3727DAAB2100194E9C /* MovieCollectionViewCell.swift */,
 			);
 			path = 2coderMovies;
 			sourceTree = "<group>";
@@ -80,7 +86,6 @@
 				E212ED190878FE82512B7222 /* Pods-2coderMovies.debug.xcconfig */,
 				FC24E7A6283F2245698E40CB /* Pods-2coderMovies.release.xcconfig */,
 			);
-			name = Pods;
 			path = Pods;
 			sourceTree = "<group>";
 		};
@@ -189,7 +194,9 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				335ADA3827DAAB2200194E9C /* MovieCollectionViewCell.swift in Sources */,
 				335ADA2627DA9F2D00194E9C /* ViewController.swift in Sources */,
+				335ADA3627DAA7D000194E9C /* HomeCollectionViewController.swift in Sources */,
 				335ADA2227DA9F2D00194E9C /* AppDelegate.swift in Sources */,
 				335ADA2427DA9F2D00194E9C /* SceneDelegate.swift in Sources */,
 			);
