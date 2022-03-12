@@ -6,13 +6,16 @@
 //
 
 import UIKit
+import SDWebImage
 
 class MovieCollectionViewCell: UICollectionViewCell {
-    @IBOutlet weak var descriptionLbl: UILabel!
     @IBOutlet weak var titleLbl: UILabel!
     @IBOutlet weak var movieImage: UIImageView!
     
-//    func setup(movies : Movies) {
-//        movieImage.image = movies.image
-//    }
+    func setup(movies : Movie) {
+        titleLbl.text = movies.original_title
+        DispatchQueue.main.async() { [weak self] in
+            self!.movieImage.sd_setImage(with: URL(string: "https://image.tmdb.org/t/p/w185/\(movies.poster_path ?? "")"), placeholderImage: UIImage(systemName: "photo.circle"))
+        }
+    }
 }

@@ -8,78 +8,102 @@
 import UIKit
 
 
-class HomeCollectionViewController: UICollectionViewController {
-
+class HomeCollectionViewController: UIViewController {
+    
+    @IBOutlet weak var collectionView: UICollectionView!
+    var movies: [Movie]?
+    var pageCounter = 1
     override func viewDidLoad() {
         super.viewDidLoad()
-
-        // Uncomment the following line to preserve selection between presentations
-        // self.clearsSelectionOnViewWillAppear = false
-
-        // Register cell classes
-//        self.collectionView!.register(UICollectionViewCell.self, forCellWithReuseIdentifier: reuseIdentifier)
-        collectionView.collectionViewLayout = UICollectionViewLayout()
-
-        // Do any additional setup after loading the view.
+        self.navigationItem.title = "Movies"
+        collectionView.collectionViewLayout = UICollectionViewFlowLayout()
+        collectionView.dataSource = self
+        collectionView.delegate = self
+        fetchMovies()
     }
-
-    // MARK: UICollectionViewDataSource
-
-    override func numberOfSections(in collectionView: UICollectionView) -> Int {
-        // #warning Incomplete implementation, return the number of sections
-        return 20
+    
+    private func fetchMovies() {
+        ApiManager.shared.fetchMoviesList(pagination: true, page: pageCounter, completion: { [weak self] result in
+            guard let self = self else { return }
+            
+            switch result {
+            case .failure(let error):
+                print(error)
+                
+            case .success(let movies):
+                self.movies = movies.results
+                DispatchQueue.main.async {
+                    self.collectionView.reloadData()
+                }
+            }
+        })
     }
+    
+    override func prepare(for segue: UIStoryboardSegue, sender: Any?) {
+        let cell = sender as! UICollectionViewCell
+        let indexPath = self.collectionView!.indexPath(for: cell)
+        guard let selectedMovie = movies?[indexPath!.row] else {
+            return
+        }
+         if let target = segue.destination as? MovieDetailsViewController {
+             target.movie = selectedMovie
+         }
+    }
+}
+// MARK: UICollectionViewDataSource
 
-
-    override func collectionView(_ collectionView: UICollectionView, numberOfItemsInSection section: Int) -> Int {
-        // #warning Incomplete implementation, return the number of items
+extension HomeCollectionViewController : UICollectionViewDataSource, UICollectionViewDelegate {
+    
+    func numberOfSections(in collectionView: UICollectionView) -> Int {
         return 1
     }
-
-    override func collectionView(_ collectionView: UICollectionView, cellForItemAt indexPath: IndexPath) -> UICollectionViewCell {
-        let cell = collectionView.dequeueReusableCell(withReuseIdentifier: "MovieCollectionViewCell", for: indexPath) as! MovieCollectionViewCell
     
+    func collectionView(_ collectionView: UICollectionView, numberOfItemsInSection section: Int) -> Int {
+        return movies?.count ?? 0
+    }
+    
+    func collectionView(_ collectionView: UICollectionView, cellForItemAt indexPath: IndexPath) -> UICollectionViewCell {
+        let cell = collectionView.dequeueReusableCell(withReuseIdentifier: "MovieCollectionViewCell", for: indexPath) as! MovieCollectionViewCell
+        
         // Configure the cell
-//        cell.setup(movies[indexPath.row])
+        cell.setup(movies: movies![indexPath.row])
         return cell
     }
-    
-    // MARK: UICollectionViewDelegate
-
-    /*
-    // Uncomment this method to specify if the specified item should be highlighted during tracking
-    override func collectionView(_ collectionView: UICollectionView, shouldHighlightItemAt indexPath: IndexPath) -> Bool {
-        return true
-    }
-    */
-
-    /*
-    // Uncomment this method to specify if the specified item should be selected
-    override func collectionView(_ collectionView: UICollectionView, shouldSelectItemAt indexPath: IndexPath) -> Bool {
-        return true
-    }
-    */
-
-    /*
-    // Uncomment these methods to specify if an action menu should be displayed for the specified item, and react to actions performed on the item
-    override func collectionView(_ collectionView: UICollectionView, shouldShowMenuForItemAt indexPath: IndexPath) -> Bool {
-        return false
-    }
-
-    override func collectionView(_ collectionView: UICollectionView, canPerformAction action: Selector, forItemAt indexPath: IndexPath, withSender sender: Any?) -> Bool {
-        return false
-    }
-
-    override func collectionView(_ collectionView: UICollectionView, performAction action: Selector, forItemAt indexPath: IndexPath, withSender sender: Any?) {
-    
-    }
-    */
-
 }
-
 
 extension HomeCollectionViewController : UICollectionViewDelegateFlowLayout {
     func collectionView(_ collectionView: UICollectionView, layout collectionViewLayout: UICollectionViewLayout, sizeForItemAt indexPath: IndexPath) -> CGSize {
-        return CGSize(width: 200, height: 300)
+        return CGSize(width: 180.0, height: 300.0)
+    }
+}
+
+extension HomeCollectionViewController : UIScrollViewDelegate {
+    func scrollViewDidScroll(_ scrollView: UIScrollView) {
+        let position = scrollView.contentOffset.y
+        
+        if position > collectionView.contentSize.height-100-scrollView.frame.size.height {
+            //fetch more data
+            
+            guard !ApiManager.shared.isPaginating else {
+                //we are already fetching more data
+                return
+            }
+            self.pageCounter += 1
+            
+            ApiManager.shared.fetchMoviesList(pagination: true, page: self.pageCounter, completion: { [weak self] result in
+                guard let self = self else { return }
+                
+                switch result {
+                case .failure(let error):
+                    print(error)
+                    
+                case .success(let movies):
+                    self.movies?.append(contentsOf: movies.results!)
+                    DispatchQueue.main.async {
+                        self.collectionView.reloadData()
+                    }
+                }
+            })
+        }
     }
 }
