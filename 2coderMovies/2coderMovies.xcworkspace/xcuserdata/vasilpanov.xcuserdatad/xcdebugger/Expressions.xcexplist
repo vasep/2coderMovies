@@ -3,6 +3,14 @@
    version = "1.0">
    <ContextStates>
       <ContextState
+         contextName = "HomeCollectionViewController.checkForFavorites():HomeCollectionViewController.swift">
+         <PersistentStrings>
+            <PersistentString
+               value = "favoriteMoviesArray">
+            </PersistentString>
+         </PersistentStrings>
+      </ContextState>
+      <ContextState
          contextName = "HomeCollectionViewController.scrollViewDidScroll(_:):HomeCollectionViewController.swift">
          <PersistentStrings>
             <PersistentString

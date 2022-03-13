@@ -8,18 +8,31 @@
 import UIKit
 
 
-class HomeCollectionViewController: UIViewController {
+class HomeViewController: UIViewController {
     
     @IBOutlet weak var collectionView: UICollectionView!
+    let context = (UIApplication.shared.delegate as! AppDelegate).persistentContainer.viewContext
+    var favoriteMoviesArray = [FavoriteMovies]()
     var movies: [Movie]?
     var pageCounter = 1
+    
+    
     override func viewDidLoad() {
         super.viewDidLoad()
         self.navigationItem.title = "Movies"
+        fetchFavoriteMoviesFromDB()
         collectionView.collectionViewLayout = UICollectionViewFlowLayout()
         collectionView.dataSource = self
         collectionView.delegate = self
         fetchMovies()
+    }
+    
+    private func fetchFavoriteMoviesFromDB() {
+        do {
+            self.favoriteMoviesArray = try context.fetch(FavoriteMovies.fetchRequest())
+        } catch {
+            //error
+        }
     }
     
     private func fetchMovies() {
@@ -32,11 +45,22 @@ class HomeCollectionViewController: UIViewController {
                 
             case .success(let movies):
                 self.movies = movies.results
+                self.checkForFavorites()
                 DispatchQueue.main.async {
                     self.collectionView.reloadData()
                 }
             }
         })
+    }
+    
+    private func checkForFavorites() {
+        for movie in 0..<movies!.count {
+            for favorite in 0..<favoriteMoviesArray.count {
+                if movies![movie].original_title!.contains(favoriteMoviesArray[favorite].movieTitle!) {
+                    self.movies![movie].favorite = true
+                }
+            }
+        }
     }
     
     override func prepare(for segue: UIStoryboardSegue, sender: Any?) {
@@ -45,14 +69,15 @@ class HomeCollectionViewController: UIViewController {
         guard let selectedMovie = movies?[indexPath!.row] else {
             return
         }
-         if let target = segue.destination as? MovieDetailsViewController {
-             target.movie = selectedMovie
-         }
+        if let target = segue.destination as? MovieDetailsViewController {
+            target.movie = selectedMovie
+        }
     }
 }
-// MARK: UICollectionViewDataSource
 
-extension HomeCollectionViewController : UICollectionViewDataSource, UICollectionViewDelegate {
+// MARK: UICollectionViewDataSource & UICollectionViewDelegate
+
+extension HomeViewController : UICollectionViewDataSource, UICollectionViewDelegate {
     
     func numberOfSections(in collectionView: UICollectionView) -> Int {
         return 1
@@ -67,17 +92,50 @@ extension HomeCollectionViewController : UICollectionViewDataSource, UICollectio
         
         // Configure the cell
         cell.setup(movies: movies![indexPath.row])
+        cell.delegate = self
         return cell
     }
 }
 
-extension HomeCollectionViewController : UICollectionViewDelegateFlowLayout {
+// MARK: UICollectionViewDelegateFlowLayout
+// Sets the width and height of the Cell
+
+extension HomeViewController : UICollectionViewDelegateFlowLayout {
     func collectionView(_ collectionView: UICollectionView, layout collectionViewLayout: UICollectionViewLayout, sizeForItemAt indexPath: IndexPath) -> CGSize {
-        return CGSize(width: 180.0, height: 300.0)
+        let width = (self.view.frame.size.width - 12 * 3) / 2 //some width
+        let height = width * 2 //ratio
+        return CGSize(width: width, height: height)
     }
 }
 
-extension HomeCollectionViewController : UIScrollViewDelegate {
+extension HomeViewController : MovieCollectionViewCellDelegate {
+    func favBtnClicked(movie: Movie) {
+        addFavoriteMovie(movie: movie)
+    }
+    
+    private func addFavoriteMovie(movie : Movie) {
+        let myalert = UIAlertController(title: "Add Favorite Movie", message: "Are you sure you that you want to add this movie to your favorite list?", preferredStyle: UIAlertController.Style.alert)
+        
+        myalert.addAction(UIAlertAction(title: "Accept", style: .default) { (action:UIAlertAction!) in
+            let item = FavoriteMovies(context: self.context)
+            item.movieTitle = movie.title
+            item.movieDescription = movie.overview
+            item.moviesImage = movie.poster_path
+            do{
+                try self.context.save()
+            } catch {
+                //error
+            }
+        })
+        myalert.addAction(UIAlertAction(title: "Cancel", style: .cancel) { (action:UIAlertAction!) in
+            print("Cancel")
+        })
+        
+        self.present(myalert, animated: true)
+    }
+}
+
+extension HomeViewController : UIScrollViewDelegate {
     func scrollViewDidScroll(_ scrollView: UIScrollView) {
         let position = scrollView.contentOffset.y
         
